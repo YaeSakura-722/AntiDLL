@@ -10,9 +10,9 @@
 
 public Plugin myinfo = 
 {
-	name = "AntiDLL Handler", 
-	author = "JDW", 
-	version = "1.7.1", 
+	name = "WolFAntiDLL Remake", 
+	author = "JDW,YaeSakura", 
+	version = "1.7.4", 
 	url = "WWW"
 };
 
@@ -126,17 +126,29 @@ void PlayerAction(int client)
 				// nothing  
 			}
 			case KICK: {
-				KickClient(client, message);
+				if (!bBanned[client]) {
+					bBanned[client] = true;
+					KickClient(client, message);
+				}
 			}
 			case BAN: {
-				BanClient(client, blocking_time, BANFLAG_AUTO, message);
+				if (!bBanned[client]) {
+					bBanned[client] = true;
+					BanClient(client, blocking_time, BANFLAG_AUTO, message);
+				}
 			}
 			case SBBAN: {
-				SBPP_BanPlayer(0, client, blocking_time, message);
-			}
+                 if (!bBanned[client]) {
+                 bBanned[client] = true;
+                 KickClient(client, message);
+                 SBPP_BanPlayer(0, client, blocking_time, message);
+                }
+           }
 			case MABAN: {
-				if(!bBanned[client])
+				if (!bBanned[client]) {
+					bBanned[client] = true;
 					MABanPlayer(0, client, MA_BAN_STEAM, blocking_time, message);
+				}
 			}
 			default: {
 				LogError("Method not found");
@@ -233,13 +245,13 @@ public Action CommandAddWhiteList(int iClient, int iArgs)
 public Action CommandReloadWhiteList(int iClient, int iArgs)
 {
 	LoadWhiteList();
-	ReplyToCommand(iClient, "[AntiDLL] %d SteamIDs loaded from whitelist", hWhiteList.Length);
+	ReplyToCommand(iClient, "[WolF] %d SteamIDs loaded from whitelist", hWhiteList.Length);
 	return Plugin_Handled;
 }
 
 public Action CommandPrintWhiteList(int iClient, int iArgs)
 {
-	ReplyToCommand(iClient, "[AntiDLL] Listing current whitelist (%d SteamIDs):", hWhiteList.Length);
+	ReplyToCommand(iClient, "[WolF] Listing current whitelist (%d SteamIDs):", hWhiteList.Length);
 	char sBuffer[32];
 	for (int i = 0; i < hWhiteList.Length; i++)
 	{
@@ -253,6 +265,6 @@ public Action CommandPrintWhiteList(int iClient, int iArgs)
 public Action CommandReloadConfig(int iClient, int iArgs)
 {
 	ConfigLoad();
-	ReplyToCommand(iClient, "[AntiDLL] config reloaded");
+	ReplyToCommand(iClient, "[WolF] config reloaded");
 	return Plugin_Handled;
 }
